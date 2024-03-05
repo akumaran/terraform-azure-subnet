@@ -1,7 +1,23 @@
-resource "azurerm_subnet" "subnet" {
-    name                 = var.subnet_name
-    resource_group_name  = var.subnet_rg_name
-    virtual_network_name = var.subnet_vnet_name
-    address_prefixes     = var.subnet_address_prefixes
-    service_endpoints    = var.subnet_service_endpoints
+resource "azurerm_subnet" "subnets" {
+  for_each                                      = { for subnet in var.subnets : subnet.name => subnet }
+  name                                          = each.value.name
+  resource_group_name                           = each.value.resource_group_name
+  virtual_network_name                          = each.value.virtual_network_name
+  address_prefixes                              = each.value.address_prefixes
+  service_endpoints                             = each.value.service_endpoints
+  private_endpoint_network_policies_enabled     = each.value.private_endpoint_network_policies_enabled
+  private_link_service_network_policies_enabled = each.value.private_link_service_network_policies_enabled
+
+  dynamic "delegation" {
+    for_each = lookup(each.value, "delegation", null) != null ? [""] : []
+
+    content {
+      name = each.value.delegation
+
+      service_delegation {
+        name    = each.value.delegation
+        actions = formatlist("Microsoft.Network/%s", local.service_delegation_actions[each.value.delegation])
+      }
+    }
+  }
 }

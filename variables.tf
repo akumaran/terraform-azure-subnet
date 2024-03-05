@@ -1,25 +1,14 @@
-variable "subnet_name" {
-  type        = string
-  description = "(Required) Name of the subnet."
-}
-
-variable "subnet_rg_name" {
-  type        = string
-  description = "(Required) Name of the resource group in which to create the subnet."
-}
-
-variable "subnet_vnet_name" {
-  type        = string
-  description = "(Required) Name of the vnet to which to attach the subnet."
-}
-
-variable "subnet_address_prefixes" {
-  type        = list(string)
-  description = "(Required) Address prefixes to be used for the subnet."
-}
-
-variable "subnet_service_endpoints" {
-  type        = list(string)
+variable "subnets" {
+  type = list(object({
+    name                                          = string
+    resource_group_name                           = string
+    virtual_network_name                          = string
+    address_prefixes                              = list(string)
+    service_endpoints                             = optional(list(string))
+    delegation                                    = optional(string)
+    private_endpoint_network_policies_enabled     = optional(bool)
+    private_link_service_network_policies_enabled = optional(bool)
+  }))
   default     = []
-  description = "(Optional) List of Service endpoints to associate with the subnet."
+  description = "List of objects that represent the configuration of each subnet."
 }
