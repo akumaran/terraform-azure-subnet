@@ -11,7 +11,6 @@ variable "subnet_rg_name" {
 variable "subnet_vnet_name" {
   type        = string
   description = "(Required) The name of the virtual network to which to attach the subnet."
-
 }
 
 variable "subnet_address_prefixes" {
